@@ -122,27 +122,6 @@
         const message = document.getElementById("msg");
 
         const correctCode = "1625";
-        const MAX_ATTEMPTS = 5;
-
-        // Inicjalizacja prób w sesji
-        if (!sessionStorage.getItem("attempts")) {
-            sessionStorage.setItem("attempts", "0");
-        }
-
-        // Blokada terminala
-        function lockTerminal() {
-            document.body.innerHTML = `
-      <div style="text-align:center;">
-        <p>DOSTĘP ZABLOKOWANY</p>
-        <p>Limit prób został przekroczony.</p>
-      </div>
-    `;
-        }
-
-        // Sprawdzenie blokady przy starcie
-        if (parseInt(sessionStorage.getItem("attempts")) >= MAX_ATTEMPTS) {
-            lockTerminal();
-        }
 
         // Obsługa inputów
         inputs.forEach((input, index) => {
@@ -182,17 +161,8 @@
                     }, 3000);
 
                 } else {
-                    let attempts = parseInt(sessionStorage.getItem("attempts"));
-                    attempts++;
-                    sessionStorage.setItem("attempts", attempts);
-
-                    if (attempts >= MAX_ATTEMPTS) {
-                        lockTerminal();
-                        return;
-                    }
-
                     // Wyświetlamy migający komunikat tylko przy błędzie
-                    message.textContent = `BŁĘDNY KOD (${MAX_ATTEMPTS - attempts} PRÓB POZOSTAŁO)`;
+                    message.textContent = `BŁĘDNY KOD`;
                     message.classList.add("blink");
 
                     // Wyzeruj pola input
