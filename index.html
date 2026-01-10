@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Archiwum</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: #0b0b0b;
+      color: #e0e0e0;
+      font-family: "Courier New", monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      border: 2px solid #8b0000;
+      background: #111;
+      padding: 40px 50px;
+      max-width: 700px;
+      width: 90%;
+      box-shadow: 0 0 25px rgba(139, 0, 0, 0.3);
+      text-align: left;
+    }
+
+    .cipher {
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .cipher::before {
+      content: "> ";
+      color: #ff4d4d;
+    }
+
+    .glitch {
+      color: #e0e0e0;
+    }
+
+    .blink {
+      color: #ff4d4d;
+      margin-top: 20px;
+      animation: blink 1.5s infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      50%,
+      100% {
+        opacity: 1;
+      }
+
+      25%,
+      75% {
+        opacity: 0;
+      }
+    }
+
+    .centered-paragraph {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #e0e0e0;
+      font-weight: normal;
+      font-size: 16px;
+      font-family: "Courier New", monospace;
+      text-align: center;
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <p class="cipher glitch">Jeżeli to czytasz, zamknij tę stronę natychmiast.</p>
+
+    <p class="cipher glitch">Nie jesteś autoryzowany do przeglądania jej, a zwłaszcza jej konsoli.</p>
+
+    <p class="cipher glitch">Brak współpracy będzie skutkował podjęciem przez nas odpowiednich kroków.</p>
+
+    <p class="blink">_</p>
+  </div>
+
+  <script>
+    document.addEventListener("keydown", function (event) {
+      if (event.key === ";") {
+        setTimeout(() => {
+          window.location.href = "sja23a.html";
+        }, 600);
+      }
+    });
+  </script>
+  <script>
+    if (sessionStorage.getItem("siteDestroyed") === "true") {
+      document.body.innerHTML = "<p class='centered-paragraph'>Witryna niedostępna</p>";
+      throw "";
+    }
+    console.log("Naciśnij ';' aby przejść dalej")
+    const elements = document.querySelectorAll(".glitch");
+    const glitchChars = "!@#$%^&*()_+-=[]{}<>?/\\|";
+
+    elements.forEach(el => {
+      const original = el.textContent;
+
+      function glitch() {
+        let text = original.split("");
+        const count = Math.floor(Math.random() * 2) + 1;
+
+        for (let i = 0; i < count; i++) {
+          const index = Math.floor(Math.random() * text.length);
+          if (text[index] !== " ") {
+            text[index] = glitchChars[Math.floor(Math.random() * glitchChars.length)];
+          }
+        }
+
+        el.textContent = text.join("");
+
+        setTimeout(() => {
+          el.textContent = original;
+        }, 700);
+      }
+
+      setInterval(glitch, 2000);
+    });
+  </script>
+</body>
+
+</html>
