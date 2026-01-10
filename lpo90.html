@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Archiwum</title>
+    <style>
+        body {
+            margin: 0;
+            background: #0b0b0b;
+            color: #e0e0e0;
+            font-family: "Courier New", monospace;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #ff4d4d;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .terminal {
+            background: #111;
+            border: 2px solid #8b0000;
+            padding: 20px;
+            max-width: 700px;
+            width: 100%;
+        }
+
+        .terminal p {
+            margin: 0 0 15px;
+            line-height: 1.5;
+        }
+
+        .hint {
+            color: #ff4d4d;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .input-line {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .input-line span {
+            margin-right: 10px;
+            color: #ff4d4d;
+        }
+
+        .input-line input {
+            flex: 1;
+            background: #0b0b0b;
+            border: none;
+            border-bottom: 2px solid #8b0000;
+            color: #e0e0e0;
+            font-family: "Courier New", monospace;
+            font-size: 18px;
+            outline: none;
+            padding: 5px;
+        }
+
+        .input-line input:focus {
+            border-color: #ff4d4d;
+        }
+
+        #message {
+            margin-top: 15px;
+            color: #ff4d4d;
+            min-height: 20px;
+        }
+
+        .blink {
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            50%,
+            100% {
+                opacity: 1;
+            }
+
+            25%,
+            75% {
+                opacity: 0;
+            }
+        }
+
+        .back-button {
+            margin-top: 25px;
+            background: #111;
+            border: 2px solid #8b0000;
+            color: #e0e0e0;
+            padding: 8px 16px;
+            font-family: "Courier New", monospace;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .back-button:hover {
+            border-color: #ff4d4d;
+        }
+
+        .centered-paragraph {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #e0e0e0;
+            font-weight: normal;
+            font-size: 16px;
+            font-family: "Courier New", monospace;
+            text-align: center;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>MONITORING - DOSTĘP TEKSTOWY</h1>
+
+    <div class="terminal">
+        <p>> Inicjalizacja modułu dostępu.</p>
+        <p>> Oczekiwanie na dane użytkownika…</p>
+
+        <p class="hint">
+            [HINT] Hasło to notatka w rewizji 11-6 obiektu, którego id to średnia oznaczonych plików
+        </p>
+
+        <div class="input-line">
+            <span>&gt;</span>
+            <input type="text" id="textCode" autocomplete="off">
+        </div>
+
+        <div id="message"></div>
+    </div>
+
+    <button class="back-button" id="backBtn">Poprzednia strona</button>
+
+    <script>
+        if (sessionStorage.getItem("siteDestroyed") === "true") {
+            document.body.innerHTML = "<p class='centered-paragraph'>Witryna niedostępna</p>";
+            throw "";
+        }
+        document.getElementById("backBtn").addEventListener("click", () => {
+            window.location.href = "bty22.html";
+        });
+
+        const input = document.getElementById("textCode");
+        const message = document.getElementById("message");
+
+        // placeholder hasła – zmienisz później
+        const secret = "SCP DISCONTINUED DUE TO ESCAPE PERCENTAGE";
+        const secretAlt = "SCP NIEWAŻNE W ZWIĄZKU Z PROCENTEM UCIECZEK."
+
+        input.addEventListener("keydown", e => {
+            if (e.key === "Enter") {
+                checkCode();
+            }
+        });
+
+        function checkCode() {
+            const entered = input.value.trim();
+
+            if (!entered) return;
+
+            if (entered === secret || entered === secretAlt) {
+                message.textContent = "DOSTĘP PRZYZNANY";
+                setTimeout(() => {
+                    window.location.href = "ytr42.html";
+                }, 2000);
+            } else {
+                message.textContent = "ODMOWA DOSTĘPU";
+                message.classList.add("blink");
+                input.value = "";
+                setTimeout(() => {
+                    message.classList.remove("blink");
+                }, 1500);
+            }
+        }
+    </script>
+
+</body>
+
+</html>

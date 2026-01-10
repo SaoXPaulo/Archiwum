@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Archiwum</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: #0b0b0b;
+      color: #e0e0e0;
+      font-family: "Courier New", monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    #chatbox {
+      width: 80%;
+      max-width: 600px;
+      height: 300px;
+      background: #111;
+      border: 2px solid #8b0000;
+      padding: 10px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    #userInput {
+      width: 80%;
+      max-width: 600px;
+      padding: 10px;
+      font-size: 18px;
+      border: 2px solid #8b0000;
+      background: #111;
+      color: #e0e0e0;
+    }
+
+    .system {
+      color: #ff4d4d;
+    }
+
+    .user {
+      color: #4dff4d;
+    }
+
+    .centered-paragraph {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #e0e0e0;
+      font-weight: normal;
+      font-size: 16px;
+      font-family: "Courier New", monospace;
+      text-align: center;
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <audio id="jumpscareSound" src="screams.mp3"></audio>
+  <h1>System Archiwum - Terminal</h1>
+  <div id="chatbox"></div>
+  <input type="text" id="userInput" placeholder="Wpisz komendę i naciśnij Enter" autofocus>
+
+  <script>
+    if (sessionStorage.getItem("siteDestroyed") === "true") {
+      document.body.innerHTML = "<p class='centered-paragraph'>Witryna niedostępna</p>";
+      throw "";
+    }
+    if (sessionStorage.getItem("lab049Unlocked") === null) {
+      sessionStorage.setItem("lab049Unlocked", "false");
+    }
+    const chatbox = document.getElementById("chatbox");
+    const userInput = document.getElementById("userInput");
+
+    const secret = "ZefhM";
+
+    const commands = {
+      "help": "Dostępne komendy: status, logs, hint, lab",
+      "status": "System: Archiwum aktywne. Ostatnia aktywność: 2:30",
+      "logs": `Logi z ostatnich sesji:<br>
+- 12/05/1973 - Operator raportuje brak kontaktu z eksperymentem nr 42.<br>
+- 12/12/1973 - Zarchiwizowano nagranie: "Searching For A World That Doesn't Exist" na koncie YT organizacji.<br>
+- 12/26/1973 - Próba odzyskania danych zakończona niepowodzeniem.`,
+      "hint": "Rozwiązanie to co druga liczba pierwsza zaczynając od 2, jest ich 5",
+      "lab": "Komenda służy do wprowadzenia podmiotu ludzkiego do odpowiedniej celi, format: lab XXX",
+      "lab 049": "Podmiot ludzki wprowadzony do celi obiektu 049"
+    };
+
+    function addMessage(text, cls) {
+      const p = document.createElement("p");
+      p.innerHTML = text; // zamiast textContent, żeby obsługiwać <br>
+      p.className = cls;
+      chatbox.appendChild(p);
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    // powitanie
+    addMessage("Witaj w Archiwum. Napisz coś, aby kontynuować…", "system");
+
+    userInput.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        const input = userInput.value.trim(); // zamiana na wielkie litery
+        if (!input) return;
+
+        addMessage("> " + input, "user");
+
+        // sprawdzenie komend
+        if (commands[input]) {
+          if (input === "lab 049") {
+            if (jumpscareSound) {
+              jumpscareSound.play().catch(e => {
+                // jeśli przeglądarka blokuje, nic się nie dzieje
+              });
+            }
+            sessionStorage.setItem("lab049Unlocked", "true");
+          }
+          addMessage(commands[input], "system");
+        }
+        // specjalny przypadek dla lab XXX (wszystkie numery)
+        else if (/^lab \d{3}$/.test(input)) {
+          addMessage(`Podmiot ludzki wprowadzony do celi nr ${input.match(/^lab (\d{3})$/)[1]}`, "system");
+        }
+        else if (input === secret) {
+          addMessage("Hasło poprawne", "system");
+          setTimeout(() => {
+            window.location.href = "bty22.html";
+          }, 2000);
+        }
+        else {
+          addMessage("...", "system");
+        }
+
+        userInput.value = "";
+      }
+    });
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Archiwum</title>
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background: #0b0b0b;
+            color: #e0e0e0;
+            font-family: "Courier New", monospace;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .text {
+            font-size: 32px;
+            letter-spacing: 4px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .notice {
+            position: absolute;
+            opacity: 0;
+            color: #8b0000;
+            font-size: 22px;
+            font-weight: bold;
+            transition: opacity 0.5s;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        /* Stałe pozycje i kąty */
+        #notice1 {
+            top: 20%;
+            left: 30%;
+            transform: rotate(-15deg);
+        }
+
+        #notice2 {
+            top: 25%;
+            right: 35%;
+            transform: rotate(10deg);
+        }
+
+        #notice3 {
+            bottom: 35%;
+            left: 30%;
+            transform: rotate(20deg);
+        }
+
+        #notice4 {
+            bottom: 25%;
+            right: 35%;
+            transform: rotate(-10deg);
+        }
+
+        .notice.show {
+            opacity: 1;
+        }
+
+        /* Jumpscare */
+        #jumpscare {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            color: red;
+            font-size: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .centered-paragraph {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #e0e0e0;
+            font-weight: normal;
+            font-size: 16px;
+            font-family: "Courier New", monospace;
+            text-align: center;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="jumpscare"><img src="scare-image.jpg" alt="BOO!"></div>
+    <audio id="jumpscareSound" src="scare.mp3"></audio>
+
+
+    <div class="text">ANI DRGNIJ</div>
+
+    <div class="notice" id="notice1">KLIKNIJ MNIE</div>
+    <div class="notice" id="notice2">NACIŚNIJ 'K'</div>
+    <div class="notice" id="notice3">PRZEGAPISZ TO</div>
+    <div class="notice" id="notice4">ZRÓB COŚ</div>
+
+    <script>
+        const TOTAL_TIME = 15; // sekund
+        let time = TOTAL_TIME;
+        let timer;
+
+        const notices = [
+            { el: document.getElementById("notice1"), showAt: 8 },
+            { el: document.getElementById("notice2"), showAt: 9 },
+            { el: document.getElementById("notice3"), showAt: 10 },
+            { el: document.getElementById("notice4"), showAt: 11 }
+        ];
+
+        function resetTimer() {
+            time = TOTAL_TIME;
+            notices.forEach(n => n.el.classList.remove("show"));
+        }
+
+        function startTimer() {
+            timer = setInterval(() => {
+                time--;
+
+                notices.forEach(n => {
+                    if (time === TOTAL_TIME - n.showAt) {
+                        n.el.classList.add("show");
+                    }
+                });
+
+                if (time <= 0) {
+                    clearInterval(timer);
+                    window.location.href = "hgh36.html";
+                }
+            }, 1000);
+        }
+
+        // Reset na ruch myszką lub klawisz
+        document.addEventListener("mousemove", resetTimer);
+        document.addEventListener("keydown", resetTimer);
+
+        startTimer();
+    </script>
+    <script>
+        if (sessionStorage.getItem("siteDestroyed") === "true") {
+            document.body.innerHTML = "<p class='centered-paragraph'>Witryna niedostępna</p>";
+            throw "";
+        }
+        const jumpscare = document.getElementById("jumpscare");
+        const jumpscareSound = document.getElementById("jumpscareSound");
+        let jumpscareShown = false;
+        let jumpscareAllowed = false;
+
+        // Timer, aby jumpscare mógł pojawić się dopiero po 3 sekundach
+        setTimeout(() => {
+            jumpscareAllowed = true;
+        }, 3000);
+
+        function showJumpscare() {
+            jumpscare.style.opacity = 1;
+            // Odtwarzanie dźwięku dopiero po interakcji
+            if (jumpscareSound) {
+                jumpscareSound.play().catch(e => {
+                    // jeśli przeglądarka blokuje, nic się nie dzieje
+                });
+            }
+            setTimeout(() => {
+                jumpscare.style.opacity = 0;
+            }, 1800); // widoczne 0.8 sekundy
+        }
+
+        function triggerJumpscare() {
+            if (jumpscareAllowed && !jumpscareShown) {
+                jumpscareShown = true;
+                showJumpscare();
+            }
+        }
+
+        // Podpinamy do ruchu myszy i klawiszy
+        document.addEventListener("mousemove", triggerJumpscare);
+        document.addEventListener("keydown", triggerJumpscare);
+
+    </script>
+
+</body>
+
+</html>

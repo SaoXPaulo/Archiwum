@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Archiwum</title>
+    <style>
+        body {
+            margin: 0;
+            background: #0b0b0b;
+            color: #cfcfcf;
+            font-family: "Courier New", monospace;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            font-size: 22px;
+        }
+
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(2, 260px);
+            grid-gap: 20px;
+        }
+
+        .camera {
+            width: 260px;
+            height: 160px;
+            background: #111;
+            border: 2px solid #333;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .camera::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(to bottom,
+                    rgba(255, 255, 255, 0.03),
+                    rgba(255, 255, 255, 0.03) 1px,
+                    transparent 1px,
+                    transparent 3px);
+            animation: noise 0.2s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes noise {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(-3px);
+            }
+        }
+
+        .label {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .status {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 11px;
+        }
+
+        .hiddenText {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 14px;
+            color: #ff4d4d;
+            background: rgba(0, 0, 0, 0.85);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+
+        /* stany */
+        .safe {
+            border-color: #00ff66;
+            box-shadow: 0 0 12px rgba(0, 255, 100, 0.4);
+        }
+
+        .danger {
+            border-color: #ff3333;
+            box-shadow: 0 0 12px rgba(255, 50, 50, 0.4);
+        }
+
+        .showText .hiddenText {
+            opacity: 1;
+        }
+
+        footer {
+            margin-top: 20px;
+            font-size: 12px;
+            opacity: 0.5;
+        }
+
+        #prevPage {
+            background: #111;
+            border: 2px solid #8b0000;
+            color: #e0e0e0;
+            padding: 10px 20px;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 20px;
+        }
+
+        #prevPage:hover {
+            border-color: #ff4d4d;
+        }
+
+        .centered-paragraph {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #e0e0e0;
+            font-weight: normal;
+            font-size: 16px;
+            font-family: "Courier New", monospace;
+            text-align: center;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>MONITORING OBIEKTÓW</h1>
+
+    <div id="grid">
+        <!-- CELA 096 -->
+        <div class="camera" id="cell096">
+            <div class="status">ONLINE</div>
+            <div class="label">CELA 096</div>
+        </div>
+
+        <!-- CELA 173 -->
+        <div class="camera" id="cell173">
+            <div class="status">ONLINE</div>
+            <div class="label">CELA 173</div>
+        </div>
+
+        <!-- CELA 049 (tu jako 1973) -->
+        <div class="camera" id="cell049">
+            <div class="status">ONLINE</div>
+            <div class="label">CELA 049</div>
+            <div class="hiddenText">
+                OBIEKT POTRZEBUJE PACJENTA
+            </div>
+        </div>
+
+        <!-- CELA 500 -->
+        <div class="camera">
+            <div class="status">OFFLINE</div>
+            <div class="label">CELA 500</div>
+        </div>
+    </div>
+
+    <footer>
+        SYSTEM MONITORINGU - TRYB OPERATORA
+    </footer>
+
+    <button id="prevPage">Poprzednia strona</button>
+
+    <script>
+        const cell096 = document.getElementById("cell096");
+        const cell173 = document.getElementById("cell173");
+        const cell049 = document.getElementById("cell049");
+
+        // ===== SESSION STATE =====
+        const lab049Unlocked = sessionStorage.getItem("lab049Unlocked");
+
+        // ===== CELA 096 =====
+        // zielona gdy NIE obserwowana
+        cell096.classList.add("safe");
+
+        cell096.addEventListener("mouseenter", () => {
+            cell096.classList.remove("safe");
+            cell096.classList.add("danger");
+        });
+
+        cell096.addEventListener("mouseleave", () => {
+            cell096.classList.remove("danger");
+            cell096.classList.add("safe");
+        });
+
+        // ===== CELA 173 =====
+        // bezpieczna TYLKO pod obserwacją
+        cell173.classList.add("danger");
+
+        cell173.addEventListener("mouseenter", () => {
+            cell173.classList.remove("danger");
+            cell173.classList.add("safe");
+            checkAllGreen();
+        });
+
+        cell173.addEventListener("mouseleave", () => {
+            cell173.classList.remove("safe");
+            cell173.classList.add("danger");
+            checkAllGreen();
+        });
+
+        // ===== CELA 049 =====
+        if (lab049Unlocked === "true") {
+            cell049.classList.add("safe");
+        } else {
+            cell049.addEventListener("mouseenter", () => {
+                cell049.classList.add("danger", "showText");
+                checkAllGreen();
+            });
+
+            cell049.addEventListener("mouseleave", () => {
+                cell049.classList.remove("danger", "showText");
+            });
+        }
+        function checkAllGreen() {
+            const allGreen =
+                cell096.classList.contains("safe") &&
+                cell173.classList.contains("safe") &&
+                cell049.classList.contains("safe");
+
+            if (allGreen) {
+                setTimeout(() => {
+                    window.location.href = "gjk77.html";
+                }, 1000);
+            }
+        }
+
+        document.getElementById("prevPage").addEventListener("click", () => {
+            window.location.href = "lpo90.html";
+        });
+
+        if (sessionStorage.getItem("siteDestroyed") === "true") {
+            document.body.innerHTML = "<p class='centered-paragraph'>Witryna niedostępna</p>";
+            throw "";
+        }
+    </script>
+
+</body>
+
+</html>

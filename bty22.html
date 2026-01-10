@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Archiwum</title>
+    <style>
+        body {
+            margin: 0;
+            background: #0b0b0b;
+            color: #e0e0e0;
+            font-family: "Courier New", monospace;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        h1 {
+            color: #ff4d4d;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 40px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .file {
+            background: #111;
+            border: 2px solid #8b0000;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .file:hover {
+            background: #1a1a1a;
+            border-color: #ff4d4d;
+        }
+
+        #inputBox {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #inputBox p {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .panel {
+            display: flex;
+            gap: 5px;
+        }
+
+        .panel input {
+            width: 40px;
+            height: 50px;
+            background: #111;
+            border: 2px solid #8b0000;
+            color: #e0e0e0;
+            font-size: 24px;
+            text-align: center;
+            outline: none;
+            margin-bottom: 10px;
+        }
+
+        .panel input:focus {
+            border-color: #ff4d4d;
+        }
+
+        #message {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #ff4d4d;
+            min-height: 20px;
+            text-align: center;
+        }
+
+        .blink {
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            50%,
+            100% {
+                opacity: 1;
+            }
+
+            25%,
+            75% {
+                opacity: 0;
+            }
+        }
+
+        #nextPage {
+            background: #111;
+            border: 2px solid #8b0000;
+            color: #e0e0e0;
+            padding: 10px 20px;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        #nextPage:hover {
+            border-color: #ff4d4d;
+        }
+
+        #prevPage {
+            margin-top: 20px;
+            background: #111;
+            border: 2px solid #8b0000;
+            color: #e0e0e0;
+            padding: 10px 20px;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        #prevPage:hover {
+            border-color: #ff4d4d;
+        }
+
+        .centered-paragraph {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #e0e0e0;
+            font-weight: normal;
+            font-size: 16px;
+            font-family: "Courier New", monospace;
+            text-align: center;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>ARCHIWUM - PLIKI DOSTĘPNE DO POBRANIA</h1>
+
+    <div class="file-list">
+        <div class="file" data-file="Doc049.jpg" download>Obiekt 049<span>Pobierz</span></div>
+        <div class="file" data-file="Doc682.jpg" download>Obiekt 682<span>Pobierz</span></div>
+        <div class="file" data-file="Doc173.jpg" download>Obiekt 173<span>Pobierz</span></div>
+        <div class="file" data-file="Doc860.jpg" download>Obiekt 860<span>Pobierz</span></div>
+    </div>
+
+    <div id="inputBox">
+        <p>Wpisz kod, aby uzyskać dostęp do dodatkowych plików:</p>
+        <div class="panel" id="codePanel">
+            <!-- 11 pól input -->
+            <input maxlength="1" inputmode="numeric">
+            <input maxlength="1" inputmode="numeric">
+            <input maxlength="1" inputmode="numeric">
+            <input maxlength="1" inputmode="numeric">
+            <input maxlength="1" inputmode="numeric">
+            <input maxlength="1" inputmode="numeric">
+            <input maxlength="1" inputmode="numeric">
+            <input maxlength="1" inputmode="numeric">
+            <input maxlength="1" inputmode="numeric">
+            <input maxlength="1" inputmode="numeric">
+            <input maxlength="1" inputmode="numeric">
+        </div>
+        <div id="message"></div>
+    </div>
+
+    <button id="nextPage">Następna strona</button>
+    <button id="prevPage">Poprzednia strona</button>
+
+    <script>
+        if (sessionStorage.getItem("siteDestroyed") === "true") {
+            document.body.innerHTML = "<p class='centered-paragraph'>Witryna niedostępna</p>";
+            throw "";
+        }
+        // Pobieranie plików
+        const files = document.querySelectorAll("div.file");
+        files.forEach(file => {
+            file.addEventListener("click", () => {
+                const link = document.createElement('a');
+                link.href = file.dataset.file;
+                link.download = file.dataset.file;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+        });
+
+        const inputs = document.querySelectorAll("#codePanel input");
+        const secret = "86068217349"; // 11-cyfrowy kod
+        const message = document.getElementById("message");
+
+        // Obsługa inputów
+        inputs.forEach((input, index) => {
+            input.addEventListener("input", () => {
+                input.value = input.value.replace(/[^0-9]/g, "");
+                if (input.value && inputs[index + 1]) {
+                    inputs[index + 1].focus();
+                }
+                checkCode();
+            });
+
+            input.addEventListener("keydown", e => {
+                if (e.key === "Backspace" && !input.value && inputs[index - 1]) {
+                    inputs[index - 1].focus();
+                }
+            });
+        });
+
+        function checkCode() {
+            let entered = "";
+            inputs.forEach(i => entered += i.value);
+
+            if (entered.length === 11) {
+                if (entered === secret) {
+                    message.textContent = "KOD POPRAWNY"
+                    setTimeout(() => {
+                        window.location.href = "asd45.html";
+                    }, 2500);
+                } else {
+                    // Po prostu wyświetl BŁĘDNY KOD
+                    message.textContent = "BŁĘDNY KOD";
+                    message.classList.add("blink");
+
+                    // Wyzeruj pola input
+                    inputs.forEach(i => i.value = "");
+                    inputs[0].focus();
+
+                    setTimeout(() => {
+                        message.classList.remove("blink");
+                    }, 1500);
+                }
+            }
+        }
+
+        // Przycisk do następnej strony
+        document.getElementById("nextPage").addEventListener("click", () => {
+            window.location.href = "lpo90.html";
+        });
+
+        document.getElementById("prevPage").addEventListener("click", () => {
+            window.location.href = "hgh36.html";
+        })
+    </script>
+
+</body>
+
+</html>
