@@ -308,7 +308,7 @@
             throw new Error("System Halted");
         }
 
-        const lab049Unlocked = sessionStorage.getItem("lab049Unlocked");
+        const lab049Unlocked = sessionStorage.getItem("lab049Unlocked") || "true";
 
         let state096 = "online";
         let state173 = "online";
@@ -408,7 +408,10 @@
             const cond049 = (lab049Unlocked === "true");
 
             if (cond173 && cond096 && cond049) {
-                window.location.href = "gjk77.html";
+                message.textContent = "CELE ZREALIZOWANE";
+                setTimeout(() => {
+                    window.location.href = "gjk77.html";
+                }, 2000);
             } else {
                 // Dodanie tekstu i włączenie migania
                 message.textContent = "CELE NIEZREALIZOWANE";
