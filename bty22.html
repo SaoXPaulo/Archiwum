@@ -79,6 +79,14 @@
             margin-bottom: 10px;
         }
 
+        .buttons-container {
+            margin-top: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+
         .panel input:focus {
             border-color: #ff4d4d;
         }
@@ -109,14 +117,20 @@
             }
         }
 
-        #nextPage {
+        button {
             background: #111;
-            border: 2px solid #8b0000;
+            border: 2px solid #555;
             color: #e0e0e0;
             padding: 10px 20px;
             font-family: 'Courier New', monospace;
             cursor: pointer;
             transition: all 0.2s;
+            width: 260px;
+            box-sizing: border-box;
+        }
+
+        #nextPage {
+            border-color: #8b0000;
         }
 
         #nextPage:hover {
@@ -124,14 +138,7 @@
         }
 
         #prevPage {
-            margin-top: 20px;
-            background: #111;
-            border: 2px solid #8b0000;
-            color: #e0e0e0;
-            padding: 10px 20px;
-            font-family: 'Courier New', monospace;
-            cursor: pointer;
-            transition: all 0.2s;
+            border-color: #8b0000;
         }
 
         #prevPage:hover {
@@ -182,9 +189,10 @@
         </div>
         <div id="message"></div>
     </div>
-
-    <button id="nextPage">Następna strona</button>
-    <button id="prevPage">Poprzednia strona</button>
+    <div class="buttons-container">
+        <button id="nextPage">Następna strona</button>
+        <button id="prevPage">Poprzednia strona</button>
+    </div>
 
     <script>
         if (sessionStorage.getItem("siteDestroyed") === "true") {
