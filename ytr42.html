@@ -27,7 +27,7 @@
         #grid {
             display: grid;
             grid-template-columns: repeat(2, 260px);
-            grid-gap: 20px;
+            grid-gap: 25px;
         }
 
         .camera {
@@ -37,7 +37,7 @@
             border: 2px solid #333;
             position: relative;
             overflow: hidden;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            transition: all 0.3s;
         }
 
         .camera::before {
@@ -51,13 +51,13 @@
                     transparent 3px);
             animation: noise 0.2s infinite;
             pointer-events: none;
+            z-index: 2;
         }
 
         @keyframes noise {
             from {
                 transform: translateY(0);
             }
-
             to {
                 transform: translateY(-3px);
             }
@@ -65,10 +65,12 @@
 
         .label {
             position: absolute;
-            bottom: 5px;
-            left: 5px;
+            bottom: 13px;
+            left: 10px;
             font-size: 12px;
             opacity: 0.7;
+            z-index: 3;
+            pointer-events: none;
         }
 
         .status {
@@ -76,6 +78,7 @@
             top: 5px;
             right: 5px;
             font-size: 11px;
+            z-index: 3;
         }
 
         .hiddenText {
@@ -91,17 +94,20 @@
             opacity: 0;
             transition: opacity 0.4s;
             pointer-events: none;
+            z-index: 4;
+            padding: 0 10px;
+            box-sizing: border-box;
         }
-
-        /* stany */
-        .safe {
-            border-color: #00ff66;
-            box-shadow: 0 0 12px rgba(0, 255, 100, 0.4);
-        }
-
+        
         .danger {
             border-color: #ff3333;
             box-shadow: 0 0 12px rgba(255, 50, 50, 0.4);
+        }
+        
+        .offline {
+            border-color: #222;
+            opacity: 0.45;
+            pointer-events: none;
         }
 
         .showText .hiddenText {
@@ -109,24 +115,112 @@
         }
 
         footer {
-            margin-top: 20px;
+            margin-top: 25px;
             font-size: 12px;
             opacity: 0.5;
         }
 
-        #prevPage {
+        .buttons-container {
+            margin-top: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+
+        button {
             background: #111;
-            border: 2px solid #8b0000;
+            border: 2px solid #555;
             color: #e0e0e0;
             padding: 10px 20px;
             font-family: 'Courier New', monospace;
             cursor: pointer;
             transition: all 0.2s;
-            margin-top: 20px;
+            width: 260px;
+            box-sizing: border-box;
+        }
+
+        button:hover {
+            border-color: #cfcfcf;
+        }
+
+        .toggle-btn {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            z-index: 10;
+            pointer-events: auto !important;
+            background: rgba(18, 18, 18, 0.8);
+            border: 1px solid #444;
+            color: #00ff66;
+            border-radius: 50%;
+            width: 34px;
+            height: 34px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn:hover {
+            border-color: #00ff66;
+            box-shadow: 0 0 8px rgba(0, 255, 100, 0.4);
+        }
+
+        .toggle-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .toggle-btn.btn-offline {
+            color: #ff3333;
+            border-color: #555;
+        }
+
+        .toggle-btn.btn-offline:hover {
+            border-color: #ff3333;
+            box-shadow: 0 0 8px rgba(255, 50, 50, 0.4);
+        }
+
+        #prevPage {
+            border-color: #8b0000;
         }
 
         #prevPage:hover {
             border-color: #ff4d4d;
+        }
+        
+        #nextPage {
+            border-color: #8b0000;
+        }
+
+        #nextPage:hover {
+            border-color: #ff4d4d;
+        }
+
+        #message {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #ff4d4d;
+            min-height: 20px;
+            text-align: center;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        .blink {
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50%, 100% {
+                opacity: 1;
+            }
+            25%, 75% {
+                opacity: 0;
+            }
         }
 
         .centered-paragraph {
@@ -149,31 +243,52 @@
     <h1>MONITORING OBIEKTÓW</h1>
 
     <div id="grid">
-        <!-- CELA 096 -->
         <div class="camera" id="cell096">
-            <div class="status">ONLINE</div>
+            <div class="status" id="status096">ONLINE</div>
             <div class="label">CELA 096</div>
+            <div class="hiddenText">OBIEKT SIEDZI W KĄCIE</div>
+            <button class="toggle-btn" id="btn096" title="Zasilanie kamery">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                    <line x1="12" y1="2" x2="12" y2="12"></line>
+                </svg>
+            </button>
         </div>
 
-        <!-- CELA 173 -->
         <div class="camera" id="cell173">
-            <div class="status">ONLINE</div>
+            <div class="status" id="status173">ONLINE</div>
             <div class="label">CELA 173</div>
+            <div class="hiddenText">OBIEKT STOI NIERUCHOMO</div>
+            <button class="toggle-btn" id="btn173" title="Zasilanie kamery">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                    <line x1="12" y1="2" x2="12" y2="12"></line>
+                </svg>
+            </button>
         </div>
 
-        <!-- CELA 049 (tu jako 1973) -->
         <div class="camera" id="cell049">
-            <div class="status">ONLINE</div>
+            <div class="status" id="status049">ONLINE</div>
             <div class="label">CELA 049</div>
-            <div class="hiddenText">
-                OBIEKT SIĘ NIECIERPLIWI
-            </div>
+            <div class="hiddenText" id="text049">
+                </div>
+            <button class="toggle-btn" id="btn049" title="Zasilanie kamery">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                    <line x1="12" y1="2" x2="12" y2="12"></line>
+                </svg>
+            </button>
         </div>
 
-        <!-- CELA 500 -->
-        <div class="camera">
+        <div class="camera offline">
             <div class="status">OFFLINE</div>
             <div class="label">CELA NIEPRZYPISANA</div>
+            <button class="toggle-btn btn-offline" style="opacity: 0.2; pointer-events: none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                    <line x1="12" y1="2" x2="12" y2="12"></line>
+                </svg>
+            </button>
         </div>
     </div>
 
@@ -181,82 +296,131 @@
         SYSTEM MONITORINGU - TRYB OPERATORA
     </footer>
 
-    <button id="prevPage">Poprzednia strona</button>
+    <div class="buttons-container">
+        <button id="prevPage">Poprzednia strona</button>
+        <button id="nextPage">Przejdź dalej</button>
+        <div id="message"></div>
+    </div>
 
     <script>
+        if (sessionStorage.getItem("siteDestroyed") === "true") {
+            document.body.innerHTML = "<p class='centered-paragraph'>Witryna niedostępna</p>";
+            throw new Error("System Halted");
+        }
+
+        const lab049Unlocked = sessionStorage.getItem("lab049Unlocked");
+
+        let state096 = "online";
+        let state173 = "online";
+        let state049 = "online";
+
         const cell096 = document.getElementById("cell096");
         const cell173 = document.getElementById("cell173");
         const cell049 = document.getElementById("cell049");
+        const message = document.getElementById("message");
 
-        // ===== SESSION STATE =====
-        const lab049Unlocked = sessionStorage.getItem("lab049Unlocked");
-
-        // ===== CELA 096 =====
-        // zielona gdy NIE obserwowana
-        cell096.classList.add("safe");
-
-        cell096.addEventListener("mouseenter", () => {
-            cell096.classList.remove("safe");
-            cell096.classList.add("danger");
-        });
-
-        cell096.addEventListener("mouseleave", () => {
-            cell096.classList.remove("danger");
-            cell096.classList.add("safe");
-        });
-
-        // ===== CELA 173 =====
-        // bezpieczna TYLKO pod obserwacją
-        cell173.classList.add("danger");
-
-        cell173.addEventListener("mouseenter", () => {
-            cell173.classList.remove("danger");
-            cell173.classList.add("safe");
-            checkAllGreen();
-        });
-
-        cell173.addEventListener("mouseleave", () => {
-            cell173.classList.remove("safe");
-            cell173.classList.add("danger");
-            checkAllGreen();
-        });
-
-        // ===== CELA 049 =====
-        if (lab049Unlocked === "true") {
-            cell049.classList.add("safe");
-        } else {
-            cell049.addEventListener("mouseenter", () => {
-                cell049.classList.add("danger", "showText");
-                checkAllGreen();
-            });
-
-            cell049.addEventListener("mouseleave", () => {
-                cell049.classList.remove("danger", "showText");
-            });
-        }
-        function checkAllGreen() {
-            const allGreen =
-                cell096.classList.contains("safe") &&
-                cell173.classList.contains("safe") &&
-                cell049.classList.contains("safe");
-
-            if (allGreen) {
-                setTimeout(() => {
-                    window.location.href = "gjk77.html";
-                }, 1000);
+        function toggleCamera(cell, buttonId, statusId, currentState) {
+            const statusLabel = document.getElementById(statusId);
+            const btn = document.getElementById(buttonId);
+            
+            if (currentState === "online") {
+                cell.classList.add("offline");
+                btn.classList.add("btn-offline");
+                statusLabel.innerText = "OFFLINE";
+                return "offline";
+            } else {
+                cell.classList.remove("offline");
+                btn.classList.remove("btn-offline");
+                statusLabel.innerText = "ONLINE";
+                return "online";
             }
         }
 
+        // CELA 096
+        document.getElementById("btn096").addEventListener("click", (e) => {
+            e.stopPropagation();
+            state096 = toggleCamera(cell096, "btn096", "status096", state096);
+            if (state096 === "offline") {
+                cell096.classList.remove("danger", "showText");
+            } else if (state096 === "online") {
+                cell096.classList.add("danger", "showText");
+            }
+        });
+
+        cell096.addEventListener("mouseenter", () => {
+            if (state096 === "online") cell096.classList.add("danger", "showText");
+        });
+        cell096.addEventListener("mouseleave", () => {
+            cell096.classList.remove("danger", "showText");
+        });
+
+        // CELA 173
+        document.getElementById("btn173").addEventListener("click", (e) => {
+            e.stopPropagation();
+            state173 = toggleCamera(cell173, "btn173", "status173", state173);
+            if (state173 === "offline") {
+                cell173.classList.remove("danger", "showText");
+            } else if (state173 === "online") {
+                cell173.classList.add("danger", "showText");
+            }
+        });
+
+        cell173.addEventListener("mouseenter", () => {
+            if (state173 === "online") cell173.classList.add("danger", "showText");
+        });
+        cell173.addEventListener("mouseleave", () => {
+            cell173.classList.remove("danger", "showText");
+        });
+
+        // CELA 049
+        document.getElementById("btn049").addEventListener("click", (e) => {
+            e.stopPropagation();
+            state049 = toggleCamera(cell049, "btn049", "status049", state049);
+            if (state049 === "offline") {
+                cell049.classList.remove("danger", "showText");
+            } else if (state049 === "online") {
+                cell049.classList.add("danger", "showText");
+            }
+        });
+
+        const text049 = document.getElementById("text049");
+        if (lab049Unlocked === "true") {
+            text049.innerText = "OBIEKT PRACUJE";
+        } else {
+            text049.innerText = "OBIEKT SIĘ NIECIERPLIWI";
+        }
+
+        cell049.addEventListener("mouseenter", () => {
+            if (state049 === "online") cell049.classList.add("danger", "showText");
+        });
+        cell049.addEventListener("mouseleave", () => {
+            cell049.classList.remove("danger", "showText");
+        });
+
+        // NAWIGACJA
         document.getElementById("prevPage").addEventListener("click", () => {
             window.location.href = "lpo90.html";
         });
 
-        if (sessionStorage.getItem("siteDestroyed") === "true") {
-            document.body.innerHTML = "<p class='centered-paragraph'>Witryna niedostępna</p>";
-            throw "";
-        }
-    </script>
+        document.getElementById("nextPage").addEventListener("click", () => {
+            const cond173 = (state173 === "online");
+            const cond096 = (state096 === "offline");
+            const cond049 = (lab049Unlocked === "true");
 
+            if (cond173 && cond096 && cond049) {
+                window.location.href = "gjk77.html";
+            } else {
+                // Dodanie tekstu i włączenie migania
+                message.textContent = "CELE NIEZREALIZOWANE";
+                message.classList.add("blink");
+
+                // POPRAWKA: Usunięcie tylko migania (klasy blink), tekst zostaje na ekranie
+                setTimeout(() => {
+                    message.classList.remove("blink");
+                }, 1500);
+            }
+        });
+    </script>
 </body>
 
 </html>
